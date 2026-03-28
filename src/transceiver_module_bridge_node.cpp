@@ -227,3 +227,13 @@ void TransceiverModuleBridge::ProcessFrameData(
     game_data_robot.current_heat = robot->current_heat;
   }
 }
+
+#ifndef ATTRACTS_BRIDGE_EXCLUDE_MAIN
+int main(int argc, char ** argv)
+{
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared<TransceiverModuleBridge>());
+  rclcpp::shutdown();
+  return 0;
+}
+#endif

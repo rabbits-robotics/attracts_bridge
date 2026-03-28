@@ -87,3 +87,13 @@ void Stm32Bridge::SendSerialData(const uint8_t buf[8])
     tcdrain(fd1_);
   }
 }
+
+#ifndef ATTRACTS_BRIDGE_EXCLUDE_MAIN
+int main(int argc, char ** argv)
+{
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared<Stm32Bridge>());
+  rclcpp::shutdown();
+  return 0;
+}
+#endif
