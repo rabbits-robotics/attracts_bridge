@@ -19,23 +19,35 @@ find_package(rabcl_ros2 REQUIRED)
 
 include_directories(include)
 
-add_executable(stm32_bridge_node
+# Libraries (logic without main)
+add_library(stm32_bridge_lib STATIC
   src/stm32_bridge_node.cpp
 )
-ament_target_dependencies(stm32_bridge_node
+ament_target_dependencies(stm32_bridge_lib
   rclcpp
   attracts_msgs
   rabcl
   rabcl_ros2
 )
 
-add_executable(transceiver_module_bridge_node
+add_library(transceiver_module_bridge_lib STATIC
   src/transceiver_module_bridge_node.cpp
 )
-ament_target_dependencies(transceiver_module_bridge_node
+ament_target_dependencies(transceiver_module_bridge_lib
   rclcpp
   attracts_msgs
 )
+
+# Executables
+add_executable(stm32_bridge_node
+  src/stm32_bridge_main.cpp
+)
+target_link_libraries(stm32_bridge_node stm32_bridge_lib)
+
+add_executable(transceiver_module_bridge_node
+  src/transceiver_module_bridge_main.cpp
+)
+target_link_libraries(transceiver_module_bridge_node transceiver_module_bridge_lib)
 
 install(TARGETS
   stm32_bridge_node
@@ -47,5 +59,20 @@ install(DIRECTORY
   launch
   DESTINATION share/${PROJECT_NAME}
 )
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  set(ament_cmake_copyright_FOUND TRUE)
+  set(ament_cmake_cpplint_FOUND TRUE)
+  ament_lint_auto_find_test_dependencies()
+
+  find_package(ament_cmake_gtest REQUIRED)
+
+  ament_add_gtest(test_crc test/test_crc.cpp)
+  target_link_libraries(test_crc transceiver_module_bridge_lib)
+
+  ament_add_gtest(test_process_frame test/test_process_frame.cpp)
+  target_link_libraries(test_process_frame transceiver_module_bridge_lib)
+endif()
 
 ament_package()
