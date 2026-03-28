@@ -1,30 +1,30 @@
-#ifndef STM32_BRIDGE_NODE_HPP
-#define STM32_BRIDGE_NODE_HPP
+#ifndef ATTRACTS_BRIDGE__STM32_BRIDGE_NODE_HPP_
+#define ATTRACTS_BRIDGE__STM32_BRIDGE_NODE_HPP_
 
-#include <string>
-#include <unistd.h>
 #include <fcntl.h>
 #include <termios.h>
+#include <unistd.h>
+
+#include <string>
 
 #include <rclcpp/rclcpp.hpp>
-#include <attracts_msgs/msg/attracts_command.hpp>
+
+#include "attracts_msgs/msg/attracts_command.hpp"
 
 class Stm32Bridge : public rclcpp::Node
 {
 public:
-    Stm32Bridge();
+  Stm32Bridge();
 
 private:
-    int OpenSerialPort(const std::string& device_name);
-    void CmdCB(const attracts_msgs::msg::AttractsCommand::SharedPtr msg);
-    void SendSerialData(const uint8_t buf[8]);
+  int OpenSerialPort(const std::string & device_name);
+  void CmdCB(const attracts_msgs::msg::AttractsCommand::SharedPtr msg);
+  void SendSerialData(const uint8_t buf[8]);
 
-private:
-    rclcpp::Subscription<attracts_msgs::msg::AttractsCommand>::SharedPtr cmd_sub_;
+  rclcpp::Subscription<attracts_msgs::msg::AttractsCommand>::SharedPtr cmd_sub_;
 
-private:
-    std::string device_name_;
-    int fd1_ = -1;
+  std::string device_name_;
+  int fd1_ = -1;
 };
 
-#endif
+#endif  // ATTRACTS_BRIDGE__STM32_BRIDGE_NODE_HPP_
