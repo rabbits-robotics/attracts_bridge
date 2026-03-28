@@ -9,8 +9,8 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-#include "attracts_msgs/msg/game_data_input.hpp"
-#include "attracts_msgs/msg/game_data_robot.hpp"
+#include <attracts_msgs/msg/game_data_input.hpp>
+#include <attracts_msgs/msg/game_data_robot.hpp>
 
 class TransceiverModuleBridge : public rclcpp::Node
 {

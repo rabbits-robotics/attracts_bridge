@@ -9,7 +9,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-#include "attracts_msgs/msg/attracts_command.hpp"
+#include <attracts_msgs/msg/attracts_command.hpp>
 
 class Stm32Bridge : public rclcpp::Node
 {
