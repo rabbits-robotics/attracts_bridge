@@ -53,37 +53,18 @@ void Stm32Bridge::CmdCB(const attracts_msgs::msg::AttractsCommand::SharedPtr msg
   rabcl_ros2::Utils::CmdMsgToInfo(*msg, info);
 
   rabcl::Uart uart;
-  uart.PrepareFloatData(static_cast<uint8_t>(rabcl::UART_ID::UART_CHASSIS_X), info.chassis_vel_x_);
-  SendSerialData(uart.uart_transmit_buffer_);
-  uart.PrepareFloatData(static_cast<uint8_t>(rabcl::UART_ID::UART_CHASSIS_Y), info.chassis_vel_y_);
-  SendSerialData(uart.uart_transmit_buffer_);
-  uart.PrepareFloatData(static_cast<uint8_t>(rabcl::UART_ID::UART_CHASSIS_Z), info.chassis_vel_z_);
-  SendSerialData(uart.uart_transmit_buffer_);
-  uart.PrepareFloatData(static_cast<uint8_t>(rabcl::UART_ID::UART_YAW), info.yaw_pos_);
-  SendSerialData(uart.uart_transmit_buffer_);
-  uart.PrepareFloatData(static_cast<uint8_t>(rabcl::UART_ID::UART_PITCH), info.pitch_pos_);
-  SendSerialData(uart.uart_transmit_buffer_);
-  uint8_t mode_data[4] = {info.load_mode_, info.fire_mode_, info.speed_mode_, info.chassis_mode_};
-  uart.Prepare4IntData(static_cast<uint8_t>(rabcl::UART_ID::UART_MODES), mode_data);
+  uart.PreparePacket(info);
   SendSerialData(uart.uart_transmit_buffer_);
 }
 
-void Stm32Bridge::SendSerialData(const uint8_t buf[8])
+void Stm32Bridge::SendSerialData(const uint8_t * buf)
 {
-  // check serial data
-  RCLCPP_INFO(this->get_logger(), "serial_send:");
-  for (int i = 0; i < 8; i++) {
-    RCLCPP_INFO(this->get_logger(), "%x ", buf[i]);
-  }
-
-  // send data
-  int rec = write(fd1_, buf, 8);
+  int rec = write(fd1_, buf, rabcl::Uart::PACKET_SIZE);
   if (rec < 0) {
     RCLCPP_ERROR(this->get_logger(), "Failed to write: %s", strerror(errno));
-  } else if (rec != 8) {
+  } else if (rec != rabcl::Uart::PACKET_SIZE) {
     RCLCPP_WARN(this->get_logger(), "Serial Warning: only %d bytes written", rec);
   } else {
-    RCLCPP_INFO(this->get_logger(), "Serial Write Successful (8 bytes)");
     tcdrain(fd1_);
   }
 }

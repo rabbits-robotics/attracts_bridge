@@ -19,7 +19,7 @@ public:
 private:
   int OpenSerialPort(const std::string & device_name);
   void CmdCB(const attracts_msgs::msg::AttractsCommand::SharedPtr msg);
-  void SendSerialData(const uint8_t buf[8]);
+  void SendSerialData(const uint8_t * buf);
 
   rclcpp::Subscription<attracts_msgs::msg::AttractsCommand>::SharedPtr cmd_sub_;
 
