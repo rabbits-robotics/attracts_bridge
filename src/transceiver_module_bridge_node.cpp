@@ -147,7 +147,7 @@ void TransceiverModuleBridge::ProcessFrameData(
   attracts_msgs::msg::GameDataRobot & game_data_robot,
   int & control_lost_counter)
 {
-  if (command_type == 0x00 && data_length == 5) {
+  if (command_type == 0x00 && data_length == 9) {
     // 入力データ処理
     struct DataInput
     {
