@@ -36,7 +36,8 @@ int Stm32Bridge::OpenSerialPort(const std::string & device_name)
 
   conf_tio.c_cflag = CS8 | CLOCAL | CREAD | B115200;
   conf_tio.c_iflag = IGNPAR;
-  conf_tio.c_lflag &= ~(ECHO | ICANON);
+  conf_tio.c_oflag = 0;
+  conf_tio.c_lflag = 0;
 
   conf_tio.c_cc[VMIN] = 1;
   conf_tio.c_cc[VTIME] = 1;
