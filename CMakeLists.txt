@@ -14,6 +14,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(attracts_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(rabcl REQUIRED)
 find_package(rabcl_ros2 REQUIRED)
 
@@ -26,6 +27,7 @@ add_executable(stm32_bridge_node
 ament_target_dependencies(stm32_bridge_node
   rclcpp
   attracts_msgs
+  sensor_msgs
   rabcl
   rabcl_ros2
 )
@@ -59,7 +61,7 @@ if(BUILD_TESTING)
 
   # Libraries for tests (main() excluded via preprocessor)
   add_library(stm32_bridge_lib STATIC src/stm32_bridge_node.cpp)
-  ament_target_dependencies(stm32_bridge_lib rclcpp attracts_msgs rabcl rabcl_ros2)
+  ament_target_dependencies(stm32_bridge_lib rclcpp attracts_msgs sensor_msgs rabcl rabcl_ros2)
   target_compile_definitions(stm32_bridge_lib PRIVATE ATTRACTS_BRIDGE_EXCLUDE_MAIN)
 
   add_library(transceiver_module_bridge_lib STATIC src/transceiver_module_bridge_node.cpp)
@@ -71,6 +73,10 @@ if(BUILD_TESTING)
 
   ament_add_gtest(test_process_frame test/test_process_frame.cpp)
   target_link_libraries(test_process_frame transceiver_module_bridge_lib)
+
+  ament_add_gtest(test_stm32_bridge test/test_stm32_bridge.cpp)
+  target_link_libraries(test_stm32_bridge stm32_bridge_lib)
+  target_include_directories(stm32_bridge_lib PUBLIC include)
 endif()
 
 ament_package()
