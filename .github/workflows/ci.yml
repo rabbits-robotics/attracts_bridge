@@ -17,6 +17,17 @@ jobs:
         with:
           required-ros-distributions: ${{ matrix.ros_distribution }}
 
+      - name: Ensure full ament toolchain is installed
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            ros-${{ matrix.ros_distribution }}-ament-cmake \
+            ros-${{ matrix.ros_distribution }}-ament-cmake-test \
+            ros-${{ matrix.ros_distribution }}-ament-cmake-gtest \
+            ros-${{ matrix.ros_distribution }}-ament-package \
+            ros-${{ matrix.ros_distribution }}-ament-lint-auto \
+            ros-${{ matrix.ros_distribution }}-ament-lint-common
+
       - name: Build and test
         uses: ros-tooling/action-ros-ci@v0.4
         with:
