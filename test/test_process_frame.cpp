@@ -22,13 +22,13 @@ static attracts_msgs::msg::GameDataRobot ProcessRobot(uint8_t * data, uint16_t l
 }
 
 // struct DataInput (packed): int16 x, int16 y, uint8 buttons, kb1, kb2, kb3, kb4 = 9 bytes
-// data_length check in ProcessFrameData is == 5 (matches the serial protocol header)
+// data_length check in ProcessFrameData is == 9
 
 TEST(ProcessFrameDataTest, InputMouseDelta)
 {
   // mouse_delta_x = 0x0102 = 258, mouse_delta_y = 0xFF00 = -256 (int16 little-endian)
   uint8_t data[9] = {0x02, 0x01, 0x00, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00};
-  auto out = ProcessInput(data, 5);
+  auto out = ProcessInput(data, 9);
   EXPECT_EQ(258, out.mouse_delta_x);
   EXPECT_EQ(-256, out.mouse_delta_y);
 }
@@ -36,7 +36,7 @@ TEST(ProcessFrameDataTest, InputMouseDelta)
 TEST(ProcessFrameDataTest, InputMouseButtonsAllSet)
 {
   uint8_t data[9] = {0x00, 0x00, 0x00, 0x00, 0x1F, 0x00, 0x00, 0x00, 0x00};
-  auto out = ProcessInput(data, 5);
+  auto out = ProcessInput(data, 9);
   EXPECT_TRUE(out.mouse_left_button);
   EXPECT_TRUE(out.mouse_right_button);
   EXPECT_TRUE(out.mouse_wheel_button);
@@ -47,7 +47,7 @@ TEST(ProcessFrameDataTest, InputMouseButtonsAllSet)
 TEST(ProcessFrameDataTest, InputMouseButtonsNone)
 {
   uint8_t data[9] = {};
-  auto out = ProcessInput(data, 5);
+  auto out = ProcessInput(data, 9);
   EXPECT_FALSE(out.mouse_left_button);
   EXPECT_FALSE(out.mouse_right_button);
   EXPECT_FALSE(out.mouse_wheel_button);
@@ -58,7 +58,7 @@ TEST(ProcessFrameDataTest, InputMouseButtonsNone)
 TEST(ProcessFrameDataTest, InputKeyboard1)
 {
   uint8_t data[9] = {0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00};
-  auto out = ProcessInput(data, 5);
+  auto out = ProcessInput(data, 9);
   EXPECT_TRUE(out.key_1);
   EXPECT_TRUE(out.key_2);
   EXPECT_TRUE(out.key_3);
@@ -72,7 +72,7 @@ TEST(ProcessFrameDataTest, InputKeyboard1)
 TEST(ProcessFrameDataTest, InputKeyboard2)
 {
   uint8_t data[9] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00};
-  auto out = ProcessInput(data, 5);
+  auto out = ProcessInput(data, 9);
   EXPECT_TRUE(out.key_e);
   EXPECT_TRUE(out.key_r);
   EXPECT_TRUE(out.key_t);
@@ -86,7 +86,7 @@ TEST(ProcessFrameDataTest, InputKeyboard2)
 TEST(ProcessFrameDataTest, InputKeyboard3)
 {
   uint8_t data[9] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7F, 0x00};
-  auto out = ProcessInput(data, 5);
+  auto out = ProcessInput(data, 9);
   EXPECT_TRUE(out.key_h);
   EXPECT_TRUE(out.key_shift);
   EXPECT_TRUE(out.key_z);
@@ -99,7 +99,7 @@ TEST(ProcessFrameDataTest, InputKeyboard3)
 TEST(ProcessFrameDataTest, InputKeyboard4)
 {
   uint8_t data[9] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0F};
-  auto out = ProcessInput(data, 5);
+  auto out = ProcessInput(data, 9);
   EXPECT_TRUE(out.key_ctrl);
   EXPECT_TRUE(out.key_alt);
   EXPECT_TRUE(out.key_space);
@@ -112,7 +112,7 @@ TEST(ProcessFrameDataTest, InputResetsControlLostCounter)
   attracts_msgs::msg::GameDataInput input;
   attracts_msgs::msg::GameDataRobot robot;
   int counter = 999;
-  TransceiverModuleBridge::ProcessFrameData(0x00, data, 5, input, robot, counter);
+  TransceiverModuleBridge::ProcessFrameData(0x00, data, 9, input, robot, counter);
   EXPECT_EQ(0, counter);
 }
 
@@ -122,8 +122,8 @@ TEST(ProcessFrameDataTest, InputWrongLengthSkipped)
   int counter = 42;
   attracts_msgs::msg::GameDataInput input;
   attracts_msgs::msg::GameDataRobot robot;
-  TransceiverModuleBridge::ProcessFrameData(0x00, data, 9, input, robot, counter);
-  // data_length != 5 so not processed — counter unchanged
+  TransceiverModuleBridge::ProcessFrameData(0x00, data, 8, input, robot, counter);
+  // data_length != 9 so not processed — counter unchanged
   EXPECT_EQ(42, counter);
 }
 
