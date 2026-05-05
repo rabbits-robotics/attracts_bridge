@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Install CI prerequisites
         run: |
-          apt-get update
+          apt-get update || (sleep 15 && apt-get update) || (sleep 30 && apt-get update)
           apt-get install -y --no-install-recommends \
             git \
             python3-colcon-common-extensions \
