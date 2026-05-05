@@ -1,0 +1,13 @@
+repositories:
+  rabcl:
+    type: git
+    url: https://github.com/rabbits-robotics/rabcl.git
+    version: main
+  rabcl_ros2:
+    type: git
+    url: https://github.com/rabbits-robotics/rabcl_ros2.git
+    version: main
+  attracts_msgs:
+    type: git
+    url: https://github.com/rabbits-robotics/attracts_msgs.git
+    version: main
